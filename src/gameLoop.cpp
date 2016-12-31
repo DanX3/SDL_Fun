@@ -29,6 +29,7 @@ int GameLoop::onDraw() {
 
 int GameLoop::onQuit() {
     SDL_Delay(1000);
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     return 0;
 }

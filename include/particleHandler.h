@@ -4,7 +4,10 @@
 #include <string>
 #include <iostream>
 #include <SDL.h>
+#include "XandY.h"
+#include "particle.h"
 #include "actor.h"
+#include "particleWheel.h"
 
 class ParticleHandler : public Actor {
 private:
@@ -13,40 +16,10 @@ private:
     const static int MAX_SPEED = 7;
     int WINDOW_W, WINDOW_H;
 
-    struct Position {
-        int x;
-        int y;
-    };
-
-    typedef Position XandY;
-
-    enum Color {
-        RED, BLUE
-    };
-
-    struct Particle {
-        int x;
-        int y;
-        int speed_x;
-        int speed_y;
-        int w;
-        int h;
-        Color color;
-        bool coupled;
-
-        // Particle(int _x, int _y,
-        //     int _speed_x, int _speed_y,
-        //     int _w, int _h, Color _color):
-        //     x(_x),
-        //     y(_y),
-        //     speed_x(_speed_x),
-        //     speed_y(_speed_y),
-        //     w(_w),
-        //     h(_h),
-        //     color(_color) {}
-    };
+    typedef XandY Position;
 
     std::vector<Particle*> particles;
+    std::vector<ParticleWheel*> wheels;
     SDL_Texture *bluePoint, *pinkPoint;
     SDL_Renderer* renderer;
 

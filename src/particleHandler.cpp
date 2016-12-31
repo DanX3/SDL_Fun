@@ -66,12 +66,26 @@ void ParticleHandler::onDraw() {
     while (i < frames) {
         adjustParticleSpeed();
         moveParticles();
+        for (size_t j = 0; j < wheels.size(); j++) {
+            wheels[j]->onDraw();
+        }
         renderParticles();
         i++;
     }
 }
 
-void ParticleHandler::onQuit() {}
+void ParticleHandler::onQuit() {
+    for (size_t i = 0; i < particles.size(); i++) {
+        free(particles[i]);
+    }
+
+    for (size_t i = 0; i < wheels.size(); i++) {
+        free(wheels[i]);
+    }
+
+    SDL_DestroyTexture(bluePoint);
+    SDL_DestroyTexture(pinkPoint);
+}
 
 int ParticleHandler::getSquaredDistance(Particle *first, Particle *second) {
     int deltaX = second->x - first->x;
@@ -102,7 +116,6 @@ void ParticleHandler::moveParticles() {
             particles[i]->speed_y *= -1;
         }
     }
-    std::cout << particles[0]->x << ", " << particles[0]->y << '\n';
 }
 
 SDL_Texture* ParticleHandler::createTextureFromPath(std::string imagePath) {
@@ -137,6 +150,9 @@ void ParticleHandler::adjustParticleSpeed() {
                     particles[j]->speed_y = 0;
                     particles[i]->coupled = true;
                     particles[j]->coupled = true;
+                    ParticleWheel *wheel =
+                        new ParticleWheel(particles[i], particles[j]);
+                    wheels.push_back(wheel);
                 }
             }
         }
