@@ -18,6 +18,8 @@ private:
     int degree;
     double degreeF;
     int radius;
+
+    int tempCounter;
 public:
     ParticleWheel(Particle*, Particle*);
     void onInit();

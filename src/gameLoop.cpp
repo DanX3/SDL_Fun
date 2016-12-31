@@ -3,7 +3,7 @@
 GameLoop::GameLoop(std::string title) {
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow(title.c_str(),
-        100, 100,
+        50, 50,
         WINDOW_W, WINDOW_H,
         SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1,

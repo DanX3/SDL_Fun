@@ -4,6 +4,7 @@ ParticleWheel::ParticleWheel(Particle *a, Particle *b) :
     first(a),
     second(b) {
         degreeF = 0.0;
+        tempCounter = 0;
         circleCenter = getCircleCenter();
         radius = (a->x - b->x) / 2;
         XandY currentPosition;
@@ -39,12 +40,12 @@ XandY ParticleWheel::getCircleCenter() {
 void ParticleWheel::onInit() {}
 
 void ParticleWheel::onDraw() {
-    first->x  = circleCenter.x + cos(degreeFirst)  * 40;
-    first->y  = circleCenter.y + sin(degreeFirst)  * 40;
-    second->x = circleCenter.x + cos(degreeSecond) * 40;
-    second->y = circleCenter.y + sin(degreeSecond) * 40;
-    degreeFirst++;
-    degreeSecond++;
+    first->x  = circleCenter.x + cos(3.1415 / 180 * degreeFirst)  * 40;
+    first->y  = circleCenter.y + sin(3.1415 / 180 * degreeFirst)  * 40;
+    second->x = circleCenter.x + cos(3.1415 / 180 * degreeSecond) * 40;
+    second->y = circleCenter.y + sin(3.1415 / 180 * degreeSecond) * 40;
+    degreeFirst  += 5;
+    degreeSecond += 5;
 }
 
 void ParticleWheel::onQuit() {}

@@ -11,7 +11,7 @@
 
 class ParticleHandler : public Actor {
 private:
-    const static int NPARTICLES = 20;
+    const static int NPARTICLES = 300;
     const static int GRAVITY_RADIUS = 50;
     const static int MAX_SPEED = 7;
     int WINDOW_W, WINDOW_H;

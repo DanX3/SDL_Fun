@@ -11,8 +11,8 @@ class GameLoop {
 private:
     SDL_Window* window;
     SDL_Renderer *renderer;
-    const static int WINDOW_W = 800;
-    const static int WINDOW_H = 600;
+    const static int WINDOW_W = 1820;
+    const static int WINDOW_H = 980;
     std::vector<Actor*> actors;
 
 public:
