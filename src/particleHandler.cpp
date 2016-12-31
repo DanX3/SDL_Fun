@@ -8,6 +8,7 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
 
 void ParticleHandler::renderParticles() {
     int i = 0;
+    SDL_SetRenderDrawColor(renderer, 30, 30, 80, 255);
     SDL_RenderClear(renderer);
     int texWidth, texHeight;
     SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
@@ -27,8 +28,8 @@ void ParticleHandler::renderParticles() {
 
 void ParticleHandler::onInit() {
     //create particle data structures
-    pinkPoint = createTextureFromPath("pinkPoint.bmp");
-    bluePoint = createTextureFromPath("bluePoint.bmp");
+    pinkPoint = createTextureFromPath("res/pinkpoint.bmp");
+    bluePoint = createTextureFromPath("res/bluepoint.bmp");
     int texWidth, texHeight;
     SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
     srand(time(NULL));
@@ -45,6 +46,8 @@ void ParticleHandler::onInit() {
         particles.push_back(particle_p);
     }
 
+    std::cout << "created " << particles.size() << " particles" << '\n';
+
     renderParticles();
 }
 
@@ -58,7 +61,7 @@ void ParticleHandler::printParticle(Particle *p) {
 }
 
 void ParticleHandler::onDraw() {
-    const int frames = 60 * 5;
+    const int frames = 60 * 7;
     int i = 0;
     while (i < frames) {
         adjustParticleSpeed();
@@ -77,7 +80,7 @@ int ParticleHandler::getSquaredDistance(Particle *first, Particle *second) {
 }
 
 void ParticleHandler::moveParticles() {
-    for (size_t i = 0; i < NPARTICLES; i++) {
+    for (size_t i = 0; i < particles.size(); i++) {
         particles[i]->x += particles[i]->speed_x;
         particles[i]->y += particles[i]->speed_y;
         if (particles[i]->x < 0) {
@@ -90,7 +93,7 @@ void ParticleHandler::moveParticles() {
         }
         int validX = WINDOW_W - particles[i]->w;
         int validY = WINDOW_H - particles[i]->h;
-        if (particles[i]->x > validX) {
+        if (particles[i]->x  > validX) {
             particles[i]->x -= particles[i]->x - validX;
             particles[i]->speed_x *= -1;
         }
@@ -99,22 +102,28 @@ void ParticleHandler::moveParticles() {
             particles[i]->speed_y *= -1;
         }
     }
+    std::cout << particles[0]->x << ", " << particles[0]->y << '\n';
 }
 
 SDL_Texture* ParticleHandler::createTextureFromPath(std::string imagePath) {
     SDL_Surface *surface = SDL_LoadBMP(imagePath.c_str());
+    if (surface == NULL) {
+        std::cerr << "Resource " << imagePath << " not found" << '\n';
+        return NULL;
+    }
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    std::cout << "imagePath:" << texture << '\n';
     SDL_FreeSurface(surface);
     return texture;
 }
 
 void ParticleHandler::adjustParticleSpeed() {
     XandY affectedSpeed;
-    for (size_t i = 0; i < NPARTICLES; i++) {
+    for (size_t i = 0; i < particles.size(); i++) {
         affectedSpeed.x = 0;
         affectedSpeed.y = 0;
         int affectedParticles = 0;
-        for (size_t j = 0; j < NPARTICLES; j++) {
+        for (size_t j = 0; j < particles.size(); j++) {
             if (particles[i]->coupled) continue;
 
             int squaredDistance = getSquaredDistance(particles[i], particles[j]);

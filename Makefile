@@ -31,4 +31,7 @@ tester:
 ticket:
 	$(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
 
+run:
+	./$(TARGET)
+
 .PHONY: clean

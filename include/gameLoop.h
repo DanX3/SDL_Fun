@@ -9,7 +9,6 @@
 
 class GameLoop {
 private:
-
     SDL_Window* window;
     SDL_Renderer *renderer;
     const static int WINDOW_W = 800;

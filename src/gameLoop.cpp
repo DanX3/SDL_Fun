@@ -11,7 +11,12 @@ GameLoop::GameLoop(std::string title) {
 }
 
 int GameLoop::onInit() {
-    actors.push_back(new ParticleHandler(renderer, 2,2));
+    actors.push_back(new ParticleHandler(renderer, WINDOW_W, WINDOW_H));
+    for (size_t i = 0; i < actors.size(); i++) {
+        actors[i]->onInit();
+    }
+
+
     return 0;
 }
 
@@ -31,7 +36,9 @@ int GameLoop::onQuit() {
 int main(int argc, char** argv) {
     GameLoop gameLoop("pink and blue");
     gameLoop.onInit();
+    std::cout << "onInitExecuted" << '\n';
     gameLoop.onDraw();
+    std::cout << "onDrawExecuted" << '\n';
     gameLoop.onQuit();
     return 0;
 }
