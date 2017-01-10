@@ -37,8 +37,8 @@ void ParticleHandler::onInit() {
         Particle *particle_p = new Particle;
         particle_p->x = rand() % (WINDOW_W - texWidth);
         particle_p->y = rand() % (WINDOW_H - texHeight);
-        particle_p->speed_x = rand() % MAX_SPEED;
-        particle_p->speed_y = rand() % MAX_SPEED;
+        particle_p->speed_x = 1 + rand() % MAX_SPEED;
+        particle_p->speed_y = 1 + rand() % MAX_SPEED;
         particle_p->w = texWidth;
         particle_p->h = texHeight;
         particle_p->color = (i % 2 == 0 ? RED : BLUE);
@@ -61,15 +61,28 @@ void ParticleHandler::printParticle(Particle *p) {
 }
 
 void ParticleHandler::onDraw() {
-    const int frames = 60 * 7;
     int i = 0;
-    while (i < frames) {
-        adjustParticleSpeed();
-        moveParticles();
-        for (size_t j = 0; j < wheels.size(); j++) {
-            wheels[j]->onDraw();
-        }
-        renderParticles();
+    int length = particles.size();
+
+    while (i < FRAMES) {
+            // std::thread first (&ParticleHandler::adjustParticleSpeed, 0, (int)length/2);
+            // std::thread second(&ParticleHandler::adjustParticleSpeed, (int)length/2+1, length);
+            // std::thread first (adjustParticleSpeed);
+            // std::thread second(adjustParticleSpeed);
+            // first.join();
+            // second.join();
+            thread_data parameterFirst;
+            parameterFirst.start = 0;
+            parameterFirst.end = length/2;
+
+            pthread_create(threads+0, NULL, [this]{adjustParticleSpeed();}, (void*)&parameterFirst);
+            // pthread_create(threads+1, NULL, &ParticleHandler::adjustParticleSpeed, length+1, length);
+            adjustParticleSpeed();
+            moveParticles();
+            for (size_t j = 0; j < wheels.size(); j++) {
+                wheels[j]->onDraw();
+            }
+            renderParticles();
         i++;
     }
 }
@@ -93,27 +106,38 @@ int ParticleHandler::getSquaredDistance(Particle *first, Particle *second) {
     return (deltaX * deltaX) + (deltaY * deltaY);
 }
 
+int ParticleHandler::getDistanceSum(Particle* first, Particle* second) {
+    return (second->x - first->x) + (second->y + first->y);
+}
+
 void ParticleHandler::moveParticles() {
     for (size_t i = 0; i < particles.size(); i++) {
         particles[i]->x += particles[i]->speed_x;
         particles[i]->y += particles[i]->speed_y;
-        if (particles[i]->x < 0) {
-            particles[i]->x *= -1;
+        if ((particles[i]->y < 0) or
+            (particles[i]->y > WINDOW_H - particles[i]->h)) {
+            particles[i]->speed_y *= -1;
+            continue;
+        }
+        if ((particles[i]->x < 0) or
+        (particles[i]->x > WINDOW_W - particles[i]->w)) {
             particles[i]->speed_x *= -1;
         }
-        if (particles[i]->y < 0) {
-            particles[i]->y *= -1;
+    }
+}
+
+void ParticleHandler::moveParticles(int start, int end) {
+    for (size_t i = start; i < end; i++) {
+        particles[i]->x += particles[i]->speed_x;
+        particles[i]->y += particles[i]->speed_y;
+        if ((particles[i]->y < 0) or
+            (particles[i]->y > WINDOW_H - particles[i]->h)) {
             particles[i]->speed_y *= -1;
+            continue;
         }
-        int validX = WINDOW_W - particles[i]->w;
-        int validY = WINDOW_H - particles[i]->h;
-        if (particles[i]->x  > validX) {
-            particles[i]->x -= particles[i]->x - validX;
+        if ((particles[i]->x < 0) or
+        (particles[i]->x > WINDOW_W - particles[i]->w)) {
             particles[i]->speed_x *= -1;
-        }
-        if (particles[i]->y > validY) {
-            particles[i]->y -= particles[i]->y - validY;
-            particles[i]->speed_y *= -1;
         }
     }
 }
@@ -130,31 +154,49 @@ SDL_Texture* ParticleHandler::createTextureFromPath(std::string imagePath) {
     return texture;
 }
 
-void ParticleHandler::adjustParticleSpeed() {
-    XandY affectedSpeed;
-    for (size_t i = 0; i < particles.size(); i++) {
-        affectedSpeed.x = 0;
-        affectedSpeed.y = 0;
-        int affectedParticles = 0;
+void ParticleHandler::onCouple(Particle *first, Particle* second) {
+    first ->speed_x = 0;
+    second->speed_y = 0;
+    first ->speed_x = 0;
+    second->speed_y = 0;
+    first ->coupled = true;
+    second->coupled = true;
+    ParticleWheel *wheel =
+        new ParticleWheel(first, second);
+    wheels.push_back(wheel);
+    std::cout << "coupled " << 2 * wheels.size() << " particles" << '\n';
+}
+
+// void ParticleHandler::adjustParticleSpeed() {
+//     for (size_t i = 0; i < particles.size(); i++) {
+//         for (size_t j = 0; j < particles.size(); j++) {
+//             if (particles[i]->coupled) continue;
+// #if 1
+//             if (getSquaredDistance(particles[i], particles[j]) < GRAVITY_RADIUS_SQUARED) {
+//                 if (particles[i]->color != particles[j]->color &&
+//                     particles[j]->coupled == false) {
+//                         onCouple(particles[i], particles[j]);
+//                 }
+//             }
+// #endif
+//         }
+//     }
+// }
+
+void *ParticleHandler::adjustParticleSpeed(void *threadArg) {
+    //TODO:this is a terrible bottleneck: computing the distance for all the particles
+    thread_data *myData = (thread_data*) threadArg;
+    for (size_t i = myData->start; i < myData->end; i++) {
         for (size_t j = 0; j < particles.size(); j++) {
             if (particles[i]->coupled) continue;
-
-            int squaredDistance = getSquaredDistance(particles[i], particles[j]);
-            bool isAffected = squaredDistance < GRAVITY_RADIUS*GRAVITY_RADIUS;
-            if (isAffected) {
+#if 1
+            if (getDistanceSum(particles[i], particles[j]) < GRAVITY_RADIUS_SQUARED) {
                 if (particles[i]->color != particles[j]->color &&
                     particles[j]->coupled == false) {
-                    particles[i]->speed_x = 0;
-                    particles[i]->speed_y = 0;
-                    particles[j]->speed_x = 0;
-                    particles[j]->speed_y = 0;
-                    particles[i]->coupled = true;
-                    particles[j]->coupled = true;
-                    ParticleWheel *wheel =
-                        new ParticleWheel(particles[i], particles[j]);
-                    wheels.push_back(wheel);
+                        onCouple(particles[i], particles[j]);
                 }
             }
+#endif
         }
     }
 }

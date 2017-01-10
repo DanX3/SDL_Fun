@@ -40,10 +40,10 @@ XandY ParticleWheel::getCircleCenter() {
 void ParticleWheel::onInit() {}
 
 void ParticleWheel::onDraw() {
-    first->x  = circleCenter.x + cos(3.1415 / 180 * degreeFirst)  * 40;
-    first->y  = circleCenter.y + sin(3.1415 / 180 * degreeFirst)  * 40;
-    second->x = circleCenter.x + cos(3.1415 / 180 * degreeSecond) * 40;
-    second->y = circleCenter.y + sin(3.1415 / 180 * degreeSecond) * 40;
+    first->x  = circleCenter.x + cos(RAD2DEG * degreeFirst)  * 40;
+    first->y  = circleCenter.y + sin(RAD2DEG * degreeFirst)  * 40;
+    second->x = circleCenter.x + cos(RAD2DEG * degreeSecond) * 40;
+    second->y = circleCenter.y + sin(RAD2DEG * degreeSecond) * 40;
     degreeFirst  += 5;
     degreeSecond += 5;
 }

@@ -19,6 +19,8 @@ private:
     double degreeF;
     int radius;
 
+    const float RAD2DEG = 3.1415 / 180;
+
     int tempCounter;
 public:
     ParticleWheel(Particle*, Particle*);
