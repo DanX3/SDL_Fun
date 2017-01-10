@@ -24,7 +24,6 @@ private:
     int tempCounter;
 public:
     ParticleWheel(Particle*, Particle*);
-    void onInit();
     void onDraw();
     void onQuit();
 };

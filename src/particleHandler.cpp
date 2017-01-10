@@ -4,6 +4,27 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
     WINDOW_W = windowWidth;
     WINDOW_H = windowHeight;
     renderer = r;
+
+    //create particle data structures
+    pinkPoint = createTextureFromPath("res/pinkpoint.bmp");
+    bluePoint = createTextureFromPath("res/bluepoint.bmp");
+    int texWidth, texHeight;
+    SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
+    srand(time(NULL));
+    for (size_t i = 0; i < NPARTICLES; i++) {
+        Particle *particle_p = new Particle;
+        particle_p->x = rand() % (WINDOW_W - texWidth);
+        particle_p->y = rand() % (WINDOW_H - texHeight);
+        particle_p->speed_x = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
+        particle_p->speed_y = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
+        particle_p->w = texWidth;
+        particle_p->h = texHeight;
+        particle_p->color = (i % 2 == 0 ? RED : BLUE);
+        particle_p->coupled = false;
+        particles.push_back(particle_p);
+    }
+
+    renderParticles();
 }
 
 void ParticleHandler::renderParticles() {
@@ -26,31 +47,6 @@ void ParticleHandler::renderParticles() {
     SDL_RenderPresent(renderer);
 }
 
-void ParticleHandler::onInit() {
-    //create particle data structures
-    pinkPoint = createTextureFromPath("res/pinkpoint.bmp");
-    bluePoint = createTextureFromPath("res/bluepoint.bmp");
-    int texWidth, texHeight;
-    SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
-    srand(time(NULL));
-    for (size_t i = 0; i < NPARTICLES; i++) {
-        Particle *particle_p = new Particle;
-        particle_p->x = rand() % (WINDOW_W - texWidth);
-        particle_p->y = rand() % (WINDOW_H - texHeight);
-        particle_p->speed_x = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
-        particle_p->speed_y = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
-        particle_p->w = texWidth;
-        particle_p->h = texHeight;
-        particle_p->color = (i % 2 == 0 ? RED : BLUE);
-        particle_p->coupled = false;
-        particles.push_back(particle_p);
-    }
-
-    std::cout << "created " << particles.size() << " particles" << '\n';
-
-    renderParticles();
-}
-
 void ParticleHandler::printParticle(Particle *p) {
     std::cout << "Position" << '\n'
         << "\t" << p->x << ", " << p->y << '\n'
@@ -64,22 +60,19 @@ void ParticleHandler::onDraw() {
     int i = 0;
     int length = particles.size();
 
-    while (i < FRAMES) {
-            std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
-            std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
-            //std::thread first (adjustParticleSpeed);
-            //std::thread second(adjustParticleSpeed);
-            first.join();
-            second.join();
+    std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
+    std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
+    //std::thread first (adjustParticleSpeed);
+    //std::thread second(adjustParticleSpeed);
+    first.join();
+    second.join();
 
-            //adjustParticleSpeed();
-            moveParticles();
-            for (size_t j = 0; j < wheels.size(); j++) {
-                wheels[j]->onDraw();
-            }
-            renderParticles();
-        i++;
+    //adjustParticleSpeed();
+    moveParticles();
+    for (size_t j = 0; j < wheels.size(); j++) {
+        wheels[j]->onDraw();
     }
+    renderParticles();
 }
 
 void ParticleHandler::onQuit() {
@@ -144,7 +137,6 @@ SDL_Texture* ParticleHandler::createTextureFromPath(std::string imagePath) {
         return NULL;
     }
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    std::cout << "imagePath:" << texture << '\n';
     SDL_FreeSurface(surface);
     return texture;
 }

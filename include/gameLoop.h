@@ -11,15 +11,17 @@ class GameLoop {
 private:
     SDL_Window* window;
     SDL_Renderer *renderer;
-    const static int WINDOW_W = 1820;
-    const static int WINDOW_H = 980;
+    const static int WINDOW_W = 800;
+    const static int WINDOW_H = 600;
     std::vector<Actor*> actors;
+    bool quit;
+    SDL_Event event;
 
 public:
     GameLoop(std::string);
-    int onInit();
-    int onDraw();
-    int onQuit();
+    int loop();
+    void userImplementation();
+    ~GameLoop();
 };
 
 #endif

@@ -7,39 +7,41 @@ GameLoop::GameLoop(std::string title) {
         WINDOW_W, WINDOW_H,
         SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        SDL_RENDERER_ACCELERATED);
+    quit = false;
+
+    userImplementation();
+
+    loop();
 }
 
-int GameLoop::onInit() {
+void GameLoop::userImplementation() {
     actors.push_back(new ParticleHandler(renderer, WINDOW_W, WINDOW_H));
-    for (size_t i = 0; i < actors.size(); i++) {
-        actors[i]->onInit();
+}
+
+int GameLoop::loop() {
+    while (!quit) {
+        SDL_PollEvent(&event);
+        for (size_t i = 0; i < actors.size(); i++) {
+            actors[i]->onDraw();
+        }
+
+        if (event.type == SDL_QUIT) {
+            quit = true;
+            for (auto actor : actors) {
+                actor->onQuit();
+            }
+        }
     }
-
-
     return 0;
 }
 
-int GameLoop::onDraw() {
-    for (size_t i = 0; i < actors.size(); i++) {
-        actors[i]->onDraw();
-    }
-    return 0;
-}
-
-int GameLoop::onQuit() {
-    SDL_Delay(1000);
+GameLoop::~GameLoop() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    return 0;
 }
 
 int main(int argc, char** argv) {
     GameLoop gameLoop("pink and blue");
-    gameLoop.onInit();
-    std::cout << "onInitExecuted" << '\n';
-    gameLoop.onDraw();
-    std::cout << "onDrawExecuted" << '\n';
-    gameLoop.onQuit();
     return 0;
 }

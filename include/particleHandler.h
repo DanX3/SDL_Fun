@@ -18,7 +18,7 @@ private:
         int end;
     };
 
-    const static int NPARTICLES = 3000;
+    const static int NPARTICLES = 1500;
     const static int GRAVITY_RADIUS = 10;
     const static int GRAVITY_RADIUS_SQUARED =
         GRAVITY_RADIUS * GRAVITY_RADIUS;
@@ -47,7 +47,6 @@ private:
     int getDistanceSum(Particle*, Particle*);
     void renderParticles();
     void renderParticles(int, int);
-    void onInit();
     void onDraw();
     void onQuit();
 public:
