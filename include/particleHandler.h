@@ -1,14 +1,13 @@
 #ifndef PARTICLE_HANDLER_H
 #define PARTICLE_HANDLER_H
 #include <vector>
-#include <string>
-#include <iostream>
 #include <SDL.h>
 #include "XandY.h"
 #include "particle.h"
 #include "actor.h"
 #include <thread>
 #include "particleWheel.h"
+#include "utils.h"
 
 class ParticleHandler : public Actor {
 private:
@@ -23,7 +22,6 @@ private:
     const static int GRAVITY_RADIUS_SQUARED =
         GRAVITY_RADIUS * GRAVITY_RADIUS;
     const static int MAX_SPEED = 5;
-    const static int FRAMES = 60 * 7;
     int WINDOW_W, WINDOW_H;
     static const int NTHREADS = 2;
     pthread_t threads[NTHREADS];

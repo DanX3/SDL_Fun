@@ -6,8 +6,8 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
     renderer = r;
 
     //create particle data structures
-    pinkPoint = createTextureFromPath("res/pinkpoint.bmp");
-    bluePoint = createTextureFromPath("res/bluepoint.bmp");
+    pinkPoint = Utils::createTextureFromPath("res/pinkpoint.bmp", renderer);
+    bluePoint = Utils::createTextureFromPath("res/bluepoint.bmp", renderer);
     int texWidth, texHeight;
     SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
     srand(time(NULL));
@@ -130,16 +130,6 @@ void ParticleHandler::moveParticles(int start, int end) {
     }
 }
 
-SDL_Texture* ParticleHandler::createTextureFromPath(std::string imagePath) {
-    SDL_Surface *surface = SDL_LoadBMP(imagePath.c_str());
-    if (surface == NULL) {
-        std::cerr << "Resource " << imagePath << " not found" << '\n';
-        return NULL;
-    }
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    return texture;
-}
 
 void ParticleHandler::onCouple(Particle *first, Particle* second) {
     first ->speed_x = 0;
