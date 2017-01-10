@@ -37,8 +37,8 @@ void ParticleHandler::onInit() {
         Particle *particle_p = new Particle;
         particle_p->x = rand() % (WINDOW_W - texWidth);
         particle_p->y = rand() % (WINDOW_H - texHeight);
-        particle_p->speed_x = 1 + rand() % MAX_SPEED;
-        particle_p->speed_y = 1 + rand() % MAX_SPEED;
+        particle_p->speed_x = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
+        particle_p->speed_y = 1 + rand() % (2*MAX_SPEED) - MAX_SPEED;
         particle_p->w = texWidth;
         particle_p->h = texHeight;
         particle_p->color = (i % 2 == 0 ? RED : BLUE);
@@ -65,19 +65,14 @@ void ParticleHandler::onDraw() {
     int length = particles.size();
 
     while (i < FRAMES) {
-            // std::thread first (&ParticleHandler::adjustParticleSpeed, 0, (int)length/2);
-            // std::thread second(&ParticleHandler::adjustParticleSpeed, (int)length/2+1, length);
-            // std::thread first (adjustParticleSpeed);
-            // std::thread second(adjustParticleSpeed);
-            // first.join();
-            // second.join();
-            thread_data parameterFirst;
-            parameterFirst.start = 0;
-            parameterFirst.end = length/2;
+            std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
+            std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
+            //std::thread first (adjustParticleSpeed);
+            //std::thread second(adjustParticleSpeed);
+            first.join();
+            second.join();
 
-            pthread_create(threads+0, NULL, [this]{adjustParticleSpeed();}, (void*)&parameterFirst);
-            // pthread_create(threads+1, NULL, &ParticleHandler::adjustParticleSpeed, length+1, length);
-            adjustParticleSpeed();
+            //adjustParticleSpeed();
             moveParticles();
             for (size_t j = 0; j < wheels.size(); j++) {
                 wheels[j]->onDraw();
@@ -164,7 +159,7 @@ void ParticleHandler::onCouple(Particle *first, Particle* second) {
     ParticleWheel *wheel =
         new ParticleWheel(first, second);
     wheels.push_back(wheel);
-    std::cout << "coupled " << 2 * wheels.size() << " particles" << '\n';
+    //std::cout << "coupled " << 2 * wheels.size() << " particles" << '\n';
 }
 
 // void ParticleHandler::adjustParticleSpeed() {
@@ -183,13 +178,15 @@ void ParticleHandler::onCouple(Particle *first, Particle* second) {
 //     }
 // }
 
-void *ParticleHandler::adjustParticleSpeed(void *threadArg) {
-    //TODO:this is a terrible bottleneck: computing the distance for all the particles
-    thread_data *myData = (thread_data*) threadArg;
-    for (size_t i = myData->start; i < myData->end; i++) {
-        for (size_t j = 0; j < particles.size(); j++) {
+
+void ParticleHandler::adjustParticleSpeed(int start, int end) {
+    //only blue particles compute the distance to the pink ones
+    //the outer for cycle through the blue particles
+    //the inner for cycle through the pink particles
+    for (size_t i = start; i < end; i+=2) {
+        for (size_t j = 1; j < particles.size(); j+=2) {
             if (particles[i]->coupled) continue;
-#if 1
+#if 0
             if (getDistanceSum(particles[i], particles[j]) < GRAVITY_RADIUS_SQUARED) {
                 if (particles[i]->color != particles[j]->color &&
                     particles[j]->coupled == false) {

@@ -7,8 +7,7 @@
 #include "XandY.h"
 #include "particle.h"
 #include "actor.h"
-// #include <boost/thread.hpp>
-#include <pthread.h>
+#include <thread>
 #include "particleWheel.h"
 
 class ParticleHandler : public Actor {
@@ -19,7 +18,7 @@ private:
         int end;
     };
 
-    const static int NPARTICLES = 2000;
+    const static int NPARTICLES = 3000;
     const static int GRAVITY_RADIUS = 10;
     const static int GRAVITY_RADIUS_SQUARED =
         GRAVITY_RADIUS * GRAVITY_RADIUS;
@@ -42,7 +41,8 @@ private:
     void moveParticles(int, int);
     void onCouple(Particle*, Particle*);
     // void adjustParticleSpeed();
-    void *adjustParticleSpeed(void*);
+    //void *adjustParticleSpeed(void*);
+    void adjustParticleSpeed(int start, int end);
     int getSquaredDistance(Particle*, Particle*);
     int getDistanceSum(Particle*, Particle*);
     void renderParticles();
