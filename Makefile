@@ -12,6 +12,7 @@ LIB :=  -lSDL2 -L lib -lm -lpthread
 INC := -Iinclude -I/usr/include/SDL2
 
 $(TARGET): $(OBJECTS)
+	@mkdir -p bin
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
 
