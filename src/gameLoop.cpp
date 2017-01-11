@@ -7,7 +7,7 @@ GameLoop::GameLoop(std::string title) {
         WINDOW_W, WINDOW_H,
         SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1,
-        SDL_RENDERER_ACCELERATED);
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     quit = false;
 
     userImplementation();
