@@ -8,8 +8,9 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
     //create particle data structures
     pinkPoint = Utils::createTextureFromPath("res/pinkpoint.bmp", renderer);
     bluePoint = Utils::createTextureFromPath("res/bluepoint.bmp", renderer);
-    int texWidth, texHeight;
     SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
+    texPosition.w = texWidth;
+    texPosition.h = texHeight;
     srand(time(NULL));
     for (size_t i = 0; i < NPARTICLES; i++) {
         Particle *particle_p = new Particle;
@@ -29,18 +30,11 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
 
 void ParticleHandler::renderParticles() {
     int i = 0;
-    SDL_SetRenderDrawColor(renderer, 30, 30, 80, 255);
-    SDL_RenderClear(renderer);
-    int texWidth, texHeight;
-    SDL_QueryTexture(pinkPoint, NULL, NULL, &texWidth, &texHeight);
-    SDL_Rect texPosition;
-    texPosition.w = texWidth;
-    texPosition.h = texHeight;
-    while (i < NPARTICLES) {
-        texPosition.x = particles[i]->x;
-        texPosition.y = particles[i]->y;
+    for (auto particle : particles) {
+        texPosition.x = particle->x;
+        texPosition.y = particle->y;
         SDL_RenderCopy(renderer,
-            (particles[i]->color == BLUE ? bluePoint : pinkPoint)
+            (particle->color == BLUE ? bluePoint : pinkPoint)
             , NULL, &texPosition);
         i++;
     }

@@ -17,7 +17,7 @@ private:
         int end;
     };
 
-    const static int NPARTICLES = 1500;
+    const static int NPARTICLES = 1000;
     const static int GRAVITY_RADIUS = 10;
     const static int GRAVITY_RADIUS_SQUARED =
         GRAVITY_RADIUS * GRAVITY_RADIUS;
@@ -32,6 +32,8 @@ private:
     std::vector<ParticleWheel*> wheels;
     SDL_Texture *bluePoint, *pinkPoint;
     SDL_Renderer* renderer;
+    int texWidth, texHeight;
+    SDL_Rect texPosition;
 
     SDL_Texture* createTextureFromPath(std::string imagePath);
     void printParticle(Particle*);
