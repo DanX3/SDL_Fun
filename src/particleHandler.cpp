@@ -36,11 +36,13 @@ void ParticleHandler::printParticle(Particle *p) {
 }
 
 void ParticleHandler::onUpdate() {
+#if 0
     int length = particles.size();
     std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
     std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
     first.join();
     second.join();
+#endif
     moveParticles();
 }
 
@@ -49,16 +51,15 @@ void ParticleHandler::onDraw() {
         wheels[j]->onDraw();
     }
 
-    int i = 0;
     for (auto particle : particles) {
         texPosition.x = particle->x;
         texPosition.y = particle->y;
         SDL_RenderCopy(renderer,
             (particle->color == BLUE ? bluePoint : pinkPoint)
             , NULL, &texPosition);
-        i++;
     }
-    SDL_RenderPresent(renderer);}
+    SDL_RenderPresent(renderer);
+}
 
 void ParticleHandler::onQuit() {
     for (size_t i = 0; i < particles.size(); i++) {
@@ -114,7 +115,6 @@ void ParticleHandler::moveParticles(int start, int end) {
         }
     }
 }
-
 
 void ParticleHandler::onCouple(Particle *first, Particle* second) {
     first ->speed_x = 0;

@@ -16,15 +16,16 @@ GameLoop::GameLoop(std::string title) {
 }
 
 void GameLoop::userImplementation() {
-    // actors.push_back(new ParticleHandler(renderer, WINDOW_W, WINDOW_H));
+    actors.push_back(new ParticleHandler(renderer, WINDOW_W, WINDOW_H));
 }
 
 int GameLoop::loop() {
     while (!quit) {
         SDL_RenderClear(renderer);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        for (size_t i = 0; i < actors.size(); i++) {
-            actors[i]->onDraw();
+        for (auto actor: actors) {
+            actor->onUpdate();
+            actor->onDraw();
         }
 
         SDL_PollEvent(&event);
