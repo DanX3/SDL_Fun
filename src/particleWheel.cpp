@@ -37,7 +37,9 @@ XandY ParticleWheel::getCircleCenter() {
     return midPoint;
 }
 
-void ParticleWheel::onDraw() {
+void ParticleWheel::onDraw() { }
+
+void ParticleWheel::onUpdate() {
     first->x  = circleCenter.x + cos(RAD2DEG * degreeFirst)  * 40;
     first->y  = circleCenter.y + sin(RAD2DEG * degreeFirst)  * 40;
     second->x = circleCenter.x + cos(RAD2DEG * degreeSecond) * 40;

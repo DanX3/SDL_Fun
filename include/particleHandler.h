@@ -45,8 +45,7 @@ private:
     void adjustParticleSpeed(int start, int end);
     int getSquaredDistance(Particle*, Particle*);
     int getDistanceSum(Particle*, Particle*);
-    void renderParticles();
-    void renderParticles(int, int);
+    void onUpdate();
     void onDraw();
     void onQuit();
 public:

@@ -24,21 +24,6 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHei
         particle_p->coupled = false;
         particles.push_back(particle_p);
     }
-
-    renderParticles();
-}
-
-void ParticleHandler::renderParticles() {
-    int i = 0;
-    for (auto particle : particles) {
-        texPosition.x = particle->x;
-        texPosition.y = particle->y;
-        SDL_RenderCopy(renderer,
-            (particle->color == BLUE ? bluePoint : pinkPoint)
-            , NULL, &texPosition);
-        i++;
-    }
-    SDL_RenderPresent(renderer);
 }
 
 void ParticleHandler::printParticle(Particle *p) {
@@ -50,24 +35,30 @@ void ParticleHandler::printParticle(Particle *p) {
         << "\t" << p->w << ", " << p->h << "\n\n";
 }
 
-void ParticleHandler::onDraw() {
-    int i = 0;
+void ParticleHandler::onUpdate() {
     int length = particles.size();
-
     std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
     std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
-    //std::thread first (adjustParticleSpeed);
-    //std::thread second(adjustParticleSpeed);
     first.join();
     second.join();
-
-    //adjustParticleSpeed();
     moveParticles();
+}
+
+void ParticleHandler::onDraw() {
     for (size_t j = 0; j < wheels.size(); j++) {
         wheels[j]->onDraw();
     }
-    renderParticles();
-}
+
+    int i = 0;
+    for (auto particle : particles) {
+        texPosition.x = particle->x;
+        texPosition.y = particle->y;
+        SDL_RenderCopy(renderer,
+            (particle->color == BLUE ? bluePoint : pinkPoint)
+            , NULL, &texPosition);
+        i++;
+    }
+    SDL_RenderPresent(renderer);}
 
 void ParticleHandler::onQuit() {
     for (size_t i = 0; i < particles.size(); i++) {
@@ -137,23 +128,6 @@ void ParticleHandler::onCouple(Particle *first, Particle* second) {
     wheels.push_back(wheel);
     //std::cout << "coupled " << 2 * wheels.size() << " particles" << '\n';
 }
-
-// void ParticleHandler::adjustParticleSpeed() {
-//     for (size_t i = 0; i < particles.size(); i++) {
-//         for (size_t j = 0; j < particles.size(); j++) {
-//             if (particles[i]->coupled) continue;
-// #if 1
-//             if (getSquaredDistance(particles[i], particles[j]) < GRAVITY_RADIUS_SQUARED) {
-//                 if (particles[i]->color != particles[j]->color &&
-//                     particles[j]->coupled == false) {
-//                         onCouple(particles[i], particles[j]);
-//                 }
-//             }
-// #endif
-//         }
-//     }
-// }
-
 
 void ParticleHandler::adjustParticleSpeed(int start, int end) {
     //only blue particles compute the distance to the pink ones
