@@ -31,7 +31,6 @@ private:
     std::vector<Particle*> particles;
     std::vector<ParticleWheel*> wheels;
     SDL_Texture *bluePoint, *pinkPoint;
-    SDL_Renderer* renderer;
     int texWidth, texHeight;
     SDL_Rect texPosition;
 
@@ -49,7 +48,7 @@ private:
     void onDraw();
     void onQuit();
 public:
-    ParticleHandler(SDL_Renderer*, int, int);
+    ParticleHandler(SDL_Renderer*, SDL_Window*, int, int);
 };
 
 

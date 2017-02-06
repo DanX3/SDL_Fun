@@ -7,4 +7,6 @@ struct XandY {
     int y;
 };
 
+typedef XandY Vector2D;
+
 #endif

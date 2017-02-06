@@ -1,6 +1,7 @@
 #include "particleHandler.h"
 
-ParticleHandler::ParticleHandler(SDL_Renderer* r, int windowWidth, int windowHeight) {
+ParticleHandler::ParticleHandler(SDL_Renderer* r, SDL_Window* w, int windowWidth, int windowHeight)
+    : Actor(r, w) {
     WINDOW_W = windowWidth;
     WINDOW_H = windowHeight;
     renderer = r;
@@ -58,7 +59,7 @@ void ParticleHandler::onDraw() {
             , NULL, &texPosition);
         i++;
     }
-    SDL_RenderPresent(renderer);}
+}
 
 void ParticleHandler::onQuit() {
     for (size_t i = 0; i < particles.size(); i++) {
