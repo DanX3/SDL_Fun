@@ -1,0 +1,2 @@
+Allowing object to receive input from outside
+Implement a collision system
