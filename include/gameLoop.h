@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "particleHandler.h"
 #include "accelCube.h"
+#include "actorProperties.h"
 
 class GameLoop {
 private:
@@ -26,9 +27,12 @@ private:
     const int FPS = 60;
     const float tickStep = 1000.0f / FPS;
 public:
-    GameLoop(std::string);
+    GameLoop(std::string, size_t windowWidth = 800, size_t windowHeight = 600);
     int loop();
-    void userImplementation();
+    void addActor(Actor*, ActorProperties);
+    SDL_Renderer* getRenderer();
+    SDL_Window* getWindow();
+    void play();
     ~GameLoop();
 };
 
