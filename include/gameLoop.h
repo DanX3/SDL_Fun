@@ -8,14 +8,15 @@
 #include "particleHandler.h"
 #include "accelCube.h"
 #include "actorProperties.h"
+#include "utils.h"
 
 class GameLoop {
 private:
     SDL_Window* window;
     SDL_Renderer *renderer;
-    const static int WINDOW_W = 1600;
-    const static int WINDOW_H = 800;
     std::vector<Actor*> actors;
+    std::vector<Actor*> actorsWithKeyboardInteraction;
+    std::vector<Actor*> actorsWithMouseInteraction;
     bool quit;
     SDL_Event event;
     const SDL_Color clearColor = {60, 60, 60, 255};
@@ -24,7 +25,7 @@ private:
     void callOnDraw();
     void handleEvents();
 
-    const int FPS = 60;
+    const int FPS = 30;
     const float tickStep = 1000.0f / FPS;
 public:
     GameLoop(std::string, size_t windowWidth = 800, size_t windowHeight = 600);

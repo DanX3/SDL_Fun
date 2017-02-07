@@ -3,7 +3,7 @@
 GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow(title.c_str(),
-        50, 50,
+        300, 300,
         windowWidth, windowHeight,
         SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1,
@@ -16,11 +16,20 @@ GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
      //actors.push_back(); 
 //}
 
-void GameLoop::play() { loop(); }
+void GameLoop::play() { 
+    std::cout << "actorsWithMouseInteraction: "
+        << actorsWithMouseInteraction.size() << '\n';
+    loop();
+}
 
 void GameLoop::addActor(Actor* actor, ActorProperties props) {
     actors.push_back(actor);
-    std::cout << "Added actor with\n" << props << '\n';
+    if (props.needMouseEvents()){
+        actorsWithMouseInteraction.push_back(actor);
+    }
+    if (props.needKeyboardEvents()) {
+        actorsWithKeyboardInteraction.push_back(actor);
+    }
 }
 
 void GameLoop::callOnUpdate() {
@@ -54,7 +63,7 @@ void GameLoop::handleEvents() {
             actor->onQuit();
         }
     }
-    if (event.type = SDL_KEYDOWN) {
+    if (event.type == SDL_KEYDOWN) {
         switch(event.key.keysym.sym) {
             case SDLK_UP:
                 std::cout << "UP" << '\n';
@@ -62,6 +71,28 @@ void GameLoop::handleEvents() {
             case SDLK_DOWN:
                 std::cout << "DOWN" << '\n';
                 break;
+        }
+    }
+    if (event.type == SDL_MOUSEMOTION) {
+        //I will have a lot of objects on the screen
+        //Probably is better the collision here, in the main loop
+        //It's true that the collision position depends on the state of the objects
+
+        //Every actor should implement a getBoundingRectangle
+        //and a more detailed triangulation of the collision area, for performance
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        SDL_Point point = {x, y};
+        SDL_Rect rect;
+        for (Actor* current: actorsWithMouseInteraction) {
+            
+            //std::cout << "Before calling getBoundingRectangle" << '\n';
+            current->getBoundingRectangle(&rect);
+            //std::cout << "After calling getBoundingRectangle" << '\n';
+            
+            if ( SDL_PointInRect(&point, &rect) == SDL_TRUE) {
+                current->onMouseEvent(&event);  
+            }
         }
     }
 }
@@ -96,9 +127,13 @@ int main(int argc, char** argv) {
     GameLoop gameLoop("pink and blue");
     SDL_Renderer* renderer = gameLoop.getRenderer();
     SDL_Window* window = gameLoop.getWindow();
-    gameLoop.addActor(new AcceleratedCube(renderer, window, 50, 50, 50, 50),
-        ActorProperties(true, false));
-    gameLoop.play();
 
+    for (int i=0; i<700; i+=150) {
+        gameLoop.addActor(new AcceleratedCube(renderer, window, i, 50, 100, 100),
+            ActorProperties(true, true));
+    }
+
+    gameLoop.play();
     return 0;
+
 }
