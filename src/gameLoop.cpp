@@ -56,7 +56,8 @@ void GameLoop::callOnDraw() {
 }
 
 void GameLoop::handleEvents() {
-    SDL_PollEvent(&event);
+    if (!SDL_PollEvent(&event))
+        return;
     if (event.type == SDL_QUIT) {
         quit = true;
         for (auto actor : actors) {
@@ -64,16 +65,12 @@ void GameLoop::handleEvents() {
         }
     }
     if (event.type == SDL_KEYDOWN) {
-        switch(event.key.keysym.sym) {
-            case SDLK_UP:
-                std::cout << "UP" << '\n';
-                break;
-            case SDLK_DOWN:
-                std::cout << "DOWN" << '\n';
-                break;
+        for (auto current: actorsWithKeyboardInteraction) {
+            current->onKeyboardEvent(&event);
         }
     }
     if (event.type == SDL_MOUSEMOTION) {
+    //if (false) {
         //I will have a lot of objects on the screen
         //Probably is better the collision here, in the main loop
         //It's true that the collision position depends on the state of the objects
@@ -95,6 +92,7 @@ void GameLoop::handleEvents() {
             }
         }
     }
+    SDL_FlushEvent(SDL_MOUSEMOTION);
 }
 
 int GameLoop::loop() {

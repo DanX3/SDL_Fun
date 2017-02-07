@@ -8,7 +8,7 @@
 class AcceleratedCube : public Actor {
 private:
     SDL_Rect rectangle;
-    const float gravity = .1f;
+    const float gravity = .5f;
     float verticalSpeed;
     int windowHeight, windowWidth;
 protected:

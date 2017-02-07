@@ -22,7 +22,7 @@ public:
         rect->h = 1;
     }
 
-    //virtual void onKeyboardEvent(SDL_Event* event) { }
+    virtual void onKeyboardEvent(SDL_Event* event) { }
     virtual void onMouseEvent(SDL_Event* event) { }
 };
 

@@ -2,3 +2,5 @@ build
 lib/*
 bin/*
 include/*.gch
+*.sw[nop]
+*/*.sw[nop]

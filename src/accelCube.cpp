@@ -43,6 +43,11 @@ void AcceleratedCube::getBoundingRectangle(SDL_Rect* rect) {
     rect->h = rectangle.h;
 }
 void AcceleratedCube::onMouseEvent(SDL_Event* event) {
-    verticalSpeed = -3.0f;
+    verticalSpeed -= 10.0f;
     //rectangle.y -= 10;
+}
+
+
+void AcceleratedCube::onKeyboardEvent(SDL_Event* event) {
+    verticalSpeed -= 10.0f;
 }
