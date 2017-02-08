@@ -7,27 +7,46 @@ AcceleratedCube::AcceleratedCube(
         rectangle.y = y;
         rectangle.w = w;
         rectangle.h = h;
-        SDL_GetWindowSize(window, &windowWidth, &windowHeight);
         verticalSpeed = 0;
 }
 
-void AcceleratedCube::onUpdate() {
-    //if the cube can fall 
-    if (rectangle.h + rectangle.y < windowHeight) {
-        verticalSpeed += gravity;
-        rectangle.y += verticalSpeed;
-    } else {
-    //if it reached the ground
-        //if it can go up
-        if (verticalSpeed < 0) {
-            verticalSpeed += gravity;
-            rectangle.y += verticalSpeed;
-        } else {
-            rectangle.y = windowHeight - rectangle.h;
-            verticalSpeed = 0;
-        }
+AcceleratedCube::AcceleratedCube(SDL_Renderer* r, SDL_Window* w, SDL_Rect* rect)
+    : Actor(r, w) {
+        rectangle.x = rect->x;
+        rectangle.y = rect->y;
+        rectangle.w = rect->w;
+        rectangle.h = rect->h;
+        x = rectangle.x;
+        y = rectangle.y;
+        SDL_GetWindowSize(w, &windowWidth, &windowHeight);
+        std::cout << windowWidth << 'x' << windowHeight << '\n';
+
+        verticalSpeed = 0;
     }
 
+void AcceleratedCube::jump() {
+    verticalSpeed -= 1000.f;
+}
+
+void AcceleratedCube::onUpdate(Uint32 deltaTime) {
+    //if the cube can fall 
+    //or if it can go up
+    int tempY =rectangle.y;
+    if (rectangle.h + rectangle.y < windowHeight or verticalSpeed < 0) {
+        verticalSpeed += gravity;
+        y += verticalSpeed * deltaTime / 1000.0f;
+        rectangle.y = round(y);
+        std::cout << deltaTime << ')' << rectangle.y - tempY << '\n';
+    } else {
+    //if it reached the ground
+        touchesFloor = true;
+        rectangle.y = windowHeight - rectangle.h;
+        verticalSpeed = 0;
+    }
+
+    if (rectangle.h + rectangle.y < windowHeight) {
+        touchesFloor = false;
+    }
 }
 void AcceleratedCube::onDraw() { 
     SDL_SetRenderDrawColor(renderer,  114, 175, 80, 255);
@@ -42,12 +61,9 @@ void AcceleratedCube::getBoundingRectangle(SDL_Rect* rect) {
     rect->w = rectangle.w;
     rect->h = rectangle.h;
 }
-void AcceleratedCube::onMouseEvent(SDL_Event* event) {
-    verticalSpeed -= 10.0f;
-    //rectangle.y -= 10;
-}
-
 
 void AcceleratedCube::onKeyboardEvent(SDL_Event* event) {
-    verticalSpeed -= 10.0f;
+    if (touchesFloor) {
+        jump();
+    }
 }

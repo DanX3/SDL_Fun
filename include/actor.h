@@ -1,25 +1,24 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include "XandY.h"
-
 class Actor {
 protected:
     SDL_Renderer* renderer;
     SDL_Window* window;
 public:
-    Actor(SDL_Renderer* r, SDL_Window* w) :
-        renderer(r),
-        window(w) { }
+    Actor(SDL_Renderer* r, SDL_Window* w) {
+        renderer = r;
+        window = w;
+    }
 
-    virtual void onUpdate() = 0;
+    virtual void onUpdate(Uint32 deltaTime) = 0;
     virtual void onDraw() = 0;
     virtual void onQuit() = 0;
     virtual void getBoundingRectangle(SDL_Rect* rect) {
-        rect->x = 1;
-        rect->y = 1;
-        rect->w = 1;
-        rect->h = 1;
+        rect->x = 0;
+        rect->y = 0;
+        rect->w = 0;
+        rect->h = 0;
     }
 
     virtual void onKeyboardEvent(SDL_Event* event) { }

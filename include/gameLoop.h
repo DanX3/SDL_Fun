@@ -21,12 +21,12 @@ private:
     SDL_Event event;
     const SDL_Color clearColor = {60, 60, 60, 255};
 
-    void callOnUpdate();
+    void callOnUpdate(Uint32);
     void callOnDraw();
     void handleEvents();
-
     const int FPS = 30;
     const float tickStep = 1000.0f / FPS;
+
 public:
     GameLoop(std::string, size_t windowWidth = 800, size_t windowHeight = 600);
     int loop();
