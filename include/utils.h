@@ -9,7 +9,6 @@
 class Utils {
 public:
     static SDL_Texture* createTextureFromPath(std::string, SDL_Renderer *);
-    static bool pointInRectangle(SDL_Point* p, SDL_Rect* r);
 };
 
 #endif

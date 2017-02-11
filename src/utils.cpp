@@ -11,12 +11,3 @@ SDL_Texture* Utils::createTextureFromPath(std::string imagePath, SDL_Renderer *r
     return texture;
 }
 
-
-static bool pointInRectangle(SDL_Point* p, SDL_Rect* r) {
-    if (p->x > r->x and
-        p->x < r->x + r->w and
-        p->y > r->y and
-        p->y < r->y + r->h)
-        return true;
-    return false;
-}
