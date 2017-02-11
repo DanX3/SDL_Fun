@@ -14,7 +14,7 @@ INC := -Iinclude -I/usr/include/SDL2
 $(TARGET): $(OBJECTS)
 	@mkdir -p bin
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB) -pg
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
@@ -34,5 +34,9 @@ ticket:
 
 run:
 	./$(TARGET)
+
+perf: run
+	gprof $(TARGET) gmon.out > performance.txt
+	less performance.txt
 
 .PHONY: clean
