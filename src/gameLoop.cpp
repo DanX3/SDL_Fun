@@ -108,7 +108,6 @@ int GameLoop::loop() {
         }
         endTick = SDL_GetTicks();
         timeSpentDrawingFrame = endTick - startTick;
-        //std::cout << SDL_GetTicks() << '\n';
     }
     return 0;
 }
@@ -122,17 +121,24 @@ GameLoop::~GameLoop() {
 }
 
 int main(int argc, char** argv) {
+#if 1
     GameLoop gameLoop("pink and blue");
     SDL_Renderer* renderer = gameLoop.getRenderer();
     SDL_Window* window = gameLoop.getWindow();
-    SDL_Rect* rectangle = new SDL_Rect{50, 50, 100, 100};
-    gameLoop.addActor(new AcceleratedCube(renderer, window, rectangle),
-        ActorProperties(true, false));
+    SDL_Rect* rectangle = new SDL_Rect{5, 5, 30, 30};
+    for (int i=0; i<600; i+=5) {
+        rectangle->x = i;
+        gameLoop.addActor(new AcceleratedCube(renderer, window, rectangle),
+            ActorProperties(MOUSE_INPUT | KEYBOARD_INPUT));
+
+    }
 
     //gameLoop.addActor(new AcceleratedCube(renderer, window, 50, 50, 50, 50),
         //ActorProperties(true, true));
 
     gameLoop.play();
+#endif
+    //ActorProperties props(KEYBOARD_INPUT | MOUSE_INPUT | COLLISION_DETAILED);
     return 0;
 
 }

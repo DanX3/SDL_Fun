@@ -24,7 +24,7 @@ private:
     void callOnUpdate(Uint32);
     void callOnDraw();
     void handleEvents();
-    const int FPS = 30;
+    const int FPS = 60;
     const float tickStep = 1000.0f / FPS;
 
 public:

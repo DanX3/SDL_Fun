@@ -19,13 +19,23 @@ AcceleratedCube::AcceleratedCube(SDL_Renderer* r, SDL_Window* w, SDL_Rect* rect)
         x = rectangle.x;
         y = rectangle.y;
         SDL_GetWindowSize(w, &windowWidth, &windowHeight);
-        std::cout << windowWidth << 'x' << windowHeight << '\n';
-
+        totalEnergy = (windowHeight - rectangle.y) * 2;
         verticalSpeed = 0;
+        rectColor.r = 114;
+        rectColor.g = 174;
+        rectColor.b = 80;
+        rectColor.a = 255;
     }
 
 void AcceleratedCube::jump() {
-    verticalSpeed -= 1000.f;
+    totalEnergy += 1000.0f;
+    verticalSpeed -= totalEnergy;
+
+    //change color
+    const int diff = 40;
+    rectColor.r = (rectColor.r + rectangle.x) % 255;
+    //rectColor.g += (rand() % 2 ? -diff : diff);
+    //rectColor.b += (rand() % 2 ? -diff : diff);
 }
 
 void AcceleratedCube::onUpdate(Uint32 deltaTime) {
@@ -33,23 +43,28 @@ void AcceleratedCube::onUpdate(Uint32 deltaTime) {
     //or if it can go up
     int tempY =rectangle.y;
     if (rectangle.h + rectangle.y < windowHeight or verticalSpeed < 0) {
-        verticalSpeed += gravity;
+        verticalSpeed += (GRAVITY * deltaTime / 1000.0f);
         y += verticalSpeed * deltaTime / 1000.0f;
         rectangle.y = round(y);
-        std::cout << deltaTime << ')' << rectangle.y - tempY << '\n';
     } else {
     //if it reached the ground
         touchesFloor = true;
         rectangle.y = windowHeight - rectangle.h;
-        verticalSpeed = 0;
+        if (totalEnergy > BOUNCE_TRESHHOLD) {
+            totalEnergy /= 1.5f;
+        } else {
+            totalEnergy = 0;
+        }
+        verticalSpeed = -totalEnergy;
     }
 
     if (rectangle.h + rectangle.y < windowHeight) {
         touchesFloor = false;
     }
 }
+
 void AcceleratedCube::onDraw() { 
-    SDL_SetRenderDrawColor(renderer,  114, 175, 80, 255);
+    SDL_SetRenderDrawColor(renderer,  rectColor.r, rectColor.g, rectColor.b, rectColor.a);
     SDL_RenderFillRect(renderer, &rectangle);
 }
 
@@ -63,6 +78,12 @@ void AcceleratedCube::getBoundingRectangle(SDL_Rect* rect) {
 }
 
 void AcceleratedCube::onKeyboardEvent(SDL_Event* event) {
+    if (touchesFloor) {
+        jump();
+    }
+}
+
+void AcceleratedCube::onMouseEvent(SDL_Event* event) {
     if (touchesFloor) {
         jump();
     }
