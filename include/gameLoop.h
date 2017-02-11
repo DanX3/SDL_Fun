@@ -17,11 +17,13 @@ private:
     std::vector<Actor*> actors;
     std::vector<Actor*> actorsWithKeyboardInteraction;
     std::vector<Actor*> actorsWithMouseInteraction;
+    std::vector<Actor*> actorsWithCollision;
     bool quit;
     SDL_Event event;
     const SDL_Color clearColor = {60, 60, 60, 255};
-
-    void callOnUpdate(Uint32);
+    
+    void collide();
+    void callOnUpdate(unsigned int);
     void callOnDraw();
     void handleEvents();
     const int FPS = 60;

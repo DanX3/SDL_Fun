@@ -7,7 +7,7 @@ TARGET := bin/runner
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -std=c++11 #-g # -Wall
+CFLAGS := -std=c++11 -Wall -pg #-g # -Wall
 LIB :=  -lSDL2 -L lib -lm -lpthread
 INC := -Iinclude -I/usr/include/SDL2
 

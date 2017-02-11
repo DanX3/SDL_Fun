@@ -24,7 +24,7 @@ public:
     AcceleratedCube(SDL_Renderer*, SDL_Window*, int, int, int, int);
     AcceleratedCube(SDL_Renderer*, SDL_Window*, SDL_Rect*);
 
-    void onUpdate(Uint32);
+    void onUpdate(unsigned int);
     void onDraw();
     void onQuit();
 

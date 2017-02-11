@@ -22,13 +22,13 @@ public:
         collisionStatus = OFF;
         if (actorConfig >= COLLISION_DETAILED) { 
             collisionStatus = DETAILED;
-            actorConfig -= 0x16;
+            actorConfig -= COLLISION_DETAILED;
         } else if (actorConfig >= COLLISION_ROUGH) {
             collisionStatus = ROUGH;
-            actorConfig -= 0x8;
+            actorConfig -= COLLISION_ROUGH;
         } else if (actorConfig >= COLLISION_OFF) {
             collisionStatus = OFF;
-            actorConfig -= 0x4;
+            actorConfig -= COLLISION_OFF;
         }
 
         mouseEvents = false;
@@ -46,6 +46,7 @@ public:
 
     bool needKeyboardEvents() { return keyboardEvents; }
     bool needMouseEvents() { return mouseEvents; }
+    CollisionStatus needCollision() { return collisionStatus; }
 
 };
 
