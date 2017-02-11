@@ -15,11 +15,8 @@ public:
     virtual void onUpdate(unsigned int deltaTime) = 0;
     virtual void onDraw() = 0;
     virtual void onQuit() = 0;
-    virtual void getBoundingRectangle(SDL_Rect* rect) {
-        rect->x = 0;
-        rect->y = 0;
-        rect->w = 0;
-        rect->h = 0;
+    virtual void getBoundingRectangle(SDL_Rect *rect) {
+        rect = NULL;
     }
     virtual void getCollisionArea() {
         

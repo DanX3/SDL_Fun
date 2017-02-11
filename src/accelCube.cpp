@@ -32,7 +32,7 @@ void AcceleratedCube::jump() {
     verticalSpeed -= totalEnergy;
 
     //change color
-    const int diff = 40;
+    //const int diff = 40;
     rectColor.r = (rectColor.r + rectangle.x) % 255;
     //rectColor.g += (rand() % 2 ? -diff : diff);
     //rectColor.b += (rand() % 2 ? -diff : diff);
@@ -41,7 +41,6 @@ void AcceleratedCube::jump() {
 void AcceleratedCube::onUpdate(Uint32 deltaTime) {
     //if the cube can fall 
     //or if it can go up
-    int tempY =rectangle.y;
     if (rectangle.h + rectangle.y < windowHeight or verticalSpeed < 0) {
         verticalSpeed += (GRAVITY * deltaTime / 1000.0f);
         y += verticalSpeed * deltaTime / 1000.0f;
@@ -70,11 +69,12 @@ void AcceleratedCube::onDraw() {
 
 void AcceleratedCube::onQuit() { }
 
-void AcceleratedCube::getBoundingRectangle(SDL_Rect* rect) {
+void AcceleratedCube::getBoundingRectangle(SDL_Rect* const rect) {
     rect->x = rectangle.x;
     rect->y = rectangle.y;
     rect->w = rectangle.w;
     rect->h = rectangle.h;
+    //rect = &rectangle;
 }
 
 void AcceleratedCube::onKeyboardEvent(SDL_Event* event) {

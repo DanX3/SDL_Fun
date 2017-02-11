@@ -11,6 +11,7 @@ GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
         | SDL_RENDERER_PRESENTVSYNC
         );
     quit = false;
+    collideFrameSkip = 0;
 }
 
 //void GameLoop::userImplementation() {
@@ -21,6 +22,8 @@ GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
 void GameLoop::play() {
     std::cout   << "Actors with collision enabled = " 
                 << actorsWithCollision.size() << '\n';
+    std::cout   << "Actors with mouse interaction = " 
+                << actorsWithMouseInteraction.size() << '\n';
     loop();
 }
 
@@ -60,7 +63,8 @@ void GameLoop::callOnDraw() {
         clearColor.a);
     SDL_RenderClear(renderer);
 
-    for (size_t i = 0; i < actors.size(); i++) {
+    size_t actorSize = actors.size();
+    for (size_t i = 0; i < actorSize; i++) {
         actors[i]->onDraw();
     }
 
@@ -110,13 +114,15 @@ void GameLoop::collide() {
         return;
 
     SDL_Rect rectangle1, rectangle2;
-    for (unsigned int i=0; i<actorsWithCollision.size()-1; i++) {
-        for (unsigned int j=i+1; j<actorsWithCollision.size(); j++) {
-            actorsWithCollision.at(i)->getBoundingRectangle(&rectangle1);
-            actorsWithCollision.at(j)->getBoundingRectangle(&rectangle2);
+    collideFrameSkip = (collideFrameSkip + 1) % collideMaxFrameSkip;
+    int actorsSize = actorsWithCollision.size();
 
+    for (int i=collideFrameSkip; i<actorsSize-1; i+=collideMaxFrameSkip) {
+        actorsWithCollision.at(i)->getBoundingRectangle(&rectangle1);
+        for (int j=i+1; j<actorsSize; j++) {
+            actorsWithCollision.at(j)->getBoundingRectangle(&rectangle2);
+                //std::cout << "Collision detected" << '\n';    
             if (SDL_TRUE == SDL_HasIntersection(&rectangle1, &rectangle2)) {
-                std::cout << "Collision detected" << '\n';    
             }
         }
     }
@@ -158,7 +164,7 @@ int main(int argc, char** argv) {
     SDL_Renderer* renderer = gameLoop.getRenderer();
     SDL_Window* window = gameLoop.getWindow();
     SDL_Rect* rectangle = new SDL_Rect{5, 5, 30, 30};
-    for (int i=0; i<600; i+=100) {
+    for (int i=0; i<600; i+=10) {
         rectangle->x = i;
         gameLoop.addActor(new AcceleratedCube(renderer, window, rectangle),
             ActorProperties(MOUSE_INPUT | KEYBOARD_INPUT | COLLISION_ROUGH));

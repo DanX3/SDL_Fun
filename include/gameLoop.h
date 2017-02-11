@@ -28,6 +28,8 @@ private:
     void handleEvents();
     const int FPS = 60;
     const float tickStep = 1000.0f / FPS;
+    const int collideMaxFrameSkip = 4;
+    int collideFrameSkip;
 
 public:
     GameLoop(std::string, size_t windowWidth = 800, size_t windowHeight = 600);
