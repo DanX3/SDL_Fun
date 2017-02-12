@@ -14,6 +14,7 @@ class GameLoop {
 private:
     SDL_Window* window;
     SDL_Renderer *renderer;
+    size_t actorsSize;
     std::vector<Actor*> actors;
     std::vector<Actor*> actorsWithKeyboardInteraction;
     std::vector<Actor*> actorsWithMouseInteraction;
