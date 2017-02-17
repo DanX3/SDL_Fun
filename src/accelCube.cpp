@@ -17,12 +17,11 @@ AcceleratedCube::AcceleratedCube(SDL_Renderer* r, SDL_Window* w, SDL_Rect* rect,
         } else {
             rectColor = *color;
         }
-        //rectColor.r = 114;
-        //rectColor.g = 174;
-        //rectColor.b = 80;
+        rectColor.r = 255;
+        rectColor.g = 255;
+        rectColor.b = 255;
         //rectColor.a = 255;
 }
-
 
 void AcceleratedCube::onCollide(Actor* actorICollidedWith) {
     if (totalEnergy == 0)
@@ -78,6 +77,31 @@ void AcceleratedCube::onUpdate(Uint32 deltaTime) {
 
     if (rectangle.h + rectangle.y < windowHeight) {
         touchesFloor = false;
+    }
+
+    //changes color by a single step
+    if (rand() % 2) {
+        int nextValue = rectColor.r + colorAdditions[0];
+        if (nextValue == 0 || nextValue >= 255) {
+            colorAdditions[0] *=-1;
+        }
+        rectColor.r += colorAdditions[0];
+    }
+    
+   else if (rand() % 2) {
+        int nextValue = rectColor.g + colorAdditions[1];
+        if (nextValue == 0 || nextValue >= 255) {
+            colorAdditions[1] *=-1;
+        }
+        rectColor.g += colorAdditions[1];
+    }
+
+    else {
+        int nextValue = rectColor.b + colorAdditions[2];
+        if (nextValue == 0 || nextValue >= 255) {
+            colorAdditions[2] *=-1;
+        }
+        rectColor.b += colorAdditions[2];
     }
 }
 
