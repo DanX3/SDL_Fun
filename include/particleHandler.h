@@ -6,7 +6,6 @@
 #include "particle.h"
 #include "actor.h"
 #include <thread>
-#include "particleWheel.h"
 #include "utils.h"
 
 class ParticleHandler : public Actor {
@@ -29,7 +28,6 @@ private:
     typedef XandY Position;
 
     std::vector<Particle*> particles;
-    std::vector<ParticleWheel*> wheels;
     SDL_Texture *bluePoint, *pinkPoint;
     int texWidth, texHeight;
     SDL_Rect texPosition;

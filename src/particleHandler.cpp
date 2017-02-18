@@ -46,9 +46,9 @@ void ParticleHandler::onUpdate() {
 }
 
 void ParticleHandler::onDraw() {
-    for (size_t j = 0; j < wheels.size(); j++) {
-        wheels[j]->onDraw();
-    }
+    //for (size_t j = 0; j < wheels.size(); j++) {
+        //wheels[j]->onDraw();
+    //}
 
     int i = 0;
     for (auto particle : particles) {
@@ -66,9 +66,9 @@ void ParticleHandler::onQuit() {
         free(particles[i]);
     }
 
-    for (size_t i = 0; i < wheels.size(); i++) {
-        free(wheels[i]);
-    }
+    //for (size_t i = 0; i < wheels.size(); i++) {
+        //free(wheels[i]);
+    //}
 
     SDL_DestroyTexture(bluePoint);
     SDL_DestroyTexture(pinkPoint);
@@ -124,9 +124,9 @@ void ParticleHandler::onCouple(Particle *first, Particle* second) {
     second->speed_y = 0;
     first ->coupled = true;
     second->coupled = true;
-    ParticleWheel *wheel =
-        new ParticleWheel(first, second);
-    wheels.push_back(wheel);
+    //ParticleWheel *wheel =
+        //new ParticleWheel(first, second);
+    //wheels.push_back(wheel);
     //std::cout << "coupled " << 2 * wheels.size() << " particles" << '\n';
 }
 

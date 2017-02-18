@@ -11,6 +11,8 @@ GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
         | SDL_RENDERER_PRESENTVSYNC
         );
     quit = false;
+    collideFrameSkip = 0;
+    actorsSize = 0;
 }
 
 //void GameLoop::userImplementation() {
@@ -19,6 +21,10 @@ GameLoop::GameLoop(std::string title, size_t windowWidth, size_t windowHeight) {
 //}
 
 void GameLoop::play() {
+    std::cout   << "Actors with collision enabled = " 
+                << actorsWithCollision.size() << '\n';
+    std::cout   << "Actors with mouse interaction = " 
+                << actorsWithMouseInteraction.size() << '\n';
     loop();
 }
 
@@ -30,11 +36,23 @@ void GameLoop::addActor(Actor* actor, ActorProperties props) {
     if (props.needKeyboardEvents()) {
         actorsWithKeyboardInteraction.push_back(actor);
     }
+
+    switch(props.needCollision()) {
+        case ROUGH:
+        case DETAILED:
+            actorsWithCollision.push_back(actor);
+            break;
+        case OFF:
+        default:
+            break;
+    }
+
+    actorsSize++;
 }
 
-void GameLoop::callOnUpdate(Uint32 deltaTime) {
+void GameLoop::callOnUpdate(unsigned int deltaTime) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    for (size_t i = 0; i < actors.size(); i++) {
+    for (size_t i = 0; i < actorsSize; i++) {
         actors[i]->onUpdate(deltaTime);
     }
 }
@@ -48,7 +66,7 @@ void GameLoop::callOnDraw() {
         clearColor.a);
     SDL_RenderClear(renderer);
 
-    for (size_t i = 0; i < actors.size(); i++) {
+    for (size_t i = 0; i < actorsSize; i++) {
         actors[i]->onDraw();
     }
 
@@ -93,10 +111,36 @@ void GameLoop::handleEvents() {
     SDL_FlushEvent(SDL_MOUSEMOTION);
 }
 
+void GameLoop::collide() {
+    if (actorsWithCollision.size() == 0)
+        return;
+
+    SDL_Rect rectangle1, rectangle2;
+    collideFrameSkip = (collideFrameSkip + 1) % collideMaxFrameSkip;
+
+    for (size_t i=collideFrameSkip; i<actorsSize-1; i+=collideMaxFrameSkip) {
+        actorsWithCollision.at(i)->getBoundingRectangle(&rectangle1);
+        for (size_t j=i+1; j<actorsSize; j++) {
+            actorsWithCollision.at(j)->getBoundingRectangle(&rectangle2);
+            if (SDL_TRUE == SDL_HasIntersection(&rectangle1, &rectangle2)) {
+                Actor *actor1, *actor2;
+                actor1 = actorsWithCollision.at(i);
+                actor2 = actorsWithCollision.at(j);
+                actor1->onCollide(actor2);
+                actor2->onCollide(actor1);
+                //std::cout << "Collision detected" << '\n';    
+            }
+        }
+    }
+}
+
 int GameLoop::loop() {
-    Uint32 startTick, endTick, timeSpentDrawingFrame = tickStep;
+    unsigned int startTick, endTick, timeSpentDrawingFrame = tickStep;
     while (!quit) {
         startTick = SDL_GetTicks();
+
+        collide();
+
         callOnUpdate(timeSpentDrawingFrame);
 
         callOnDraw();
@@ -125,13 +169,14 @@ int main(int argc, char** argv) {
     GameLoop gameLoop("pink and blue");
     SDL_Renderer* renderer = gameLoop.getRenderer();
     SDL_Window* window = gameLoop.getWindow();
-    SDL_Rect* rectangle = new SDL_Rect{5, 5, 30, 30};
-    for (int i=0; i<600; i+=5) {
-        rectangle->x = i;
-        gameLoop.addActor(new AcceleratedCube(renderer, window, rectangle),
-            ActorProperties(MOUSE_INPUT | KEYBOARD_INPUT));
 
-    }
+    gameLoop.addActor( new AcceleratedCube(
+        renderer, window, new SDL_Rect{300,0,100,100}, new SDL_Color{244,67,54,255}),
+        ActorProperties(COLLISION_ROUGH));
+    gameLoop.addActor(new AcceleratedCube(
+        renderer, window, new SDL_Rect{300, 500,100,100}),
+        ActorProperties(COLLISION_ROUGH));
+
 
     //gameLoop.addActor(new AcceleratedCube(renderer, window, 50, 50, 50, 50),
         //ActorProperties(true, true));
