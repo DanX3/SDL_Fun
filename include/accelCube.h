@@ -5,7 +5,6 @@
 #include "actor.h"
 #include <iostream>
 #include <math.h>
-#include <iostream>
 
 class AcceleratedCube : public Actor {
 private:
@@ -15,12 +14,14 @@ private:
     float verticalSpeed;
     bool touchesFloor;
     int windowWidth, windowHeight;
+
     void jump();
     void fall(unsigned int);
     void bounce(int);
     float x, y;
     float totalEnergy;
     SDL_Color rectColor;
+    int colorAdditions[3]={1,1,1};
     const SDL_Color defaultColor={114, 174, 80, 255};
 protected:
 public:
