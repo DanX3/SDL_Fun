@@ -24,6 +24,11 @@ AcceleratedCube::AcceleratedCube(SDL_Renderer* r, SDL_Window* w, SDL_Rect* rect,
 }
 
 
+void AcceleratedCube::changeColor() {
+    int diff = 40;
+    rectColor.r = (rectColor.r + rectangle.x) % 255;
+}
+
 void AcceleratedCube::onCollide(Actor* actorICollidedWith) {
     if (totalEnergy == 0)
         return;
@@ -35,20 +40,18 @@ void AcceleratedCube::onCollide(Actor* actorICollidedWith) {
 }
 
 void AcceleratedCube::jump() {
-    totalEnergy += 1000.0f;
+    totalEnergy += 1500.0f - rectangle.x;
     verticalSpeed -= totalEnergy;
 
-    //change color
-    //const int diff = 40;
-    //rectColor.r = (rectColor.r + rectangle.x) % 255;
-    //rectColor.g += (rand() % 2 ? -diff : diff);
-    //rectColor.b += (rand() % 2 ? -diff : diff);
+    //changeColor();
+    //rectColor.g = (rectColor.g + rectangle.x) % 255;
+    //rectColor.b = (rectColor.b + rectangle.x) % 255;
 }
 
 void AcceleratedCube::bounce(int bounceSurfaceHeight) {
-        std::cout << "Stopped falling" << '\n';
-        std::cout << "totalEnergy =  " << totalEnergy << '\n';
-        std::cout << "verticalSpeed =  " << verticalSpeed << '\n';
+        //std::cout << "Stopped falling" << '\n';
+        //std::cout << "totalEnergy =  " << totalEnergy << '\n';
+        //std::cout << "verticalSpeed =  " << verticalSpeed << '\n';
     touchesFloor = true;
     y = windowHeight - rectangle.h - bounceSurfaceHeight;
     rectangle.y = round(y);

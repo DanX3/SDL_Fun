@@ -16,7 +16,7 @@ private:
         int end;
     };
 
-    const static int NPARTICLES = 1000;
+    unsigned int NPARTICLES;
     const static int GRAVITY_RADIUS = 10;
     const static int GRAVITY_RADIUS_SQUARED =
         GRAVITY_RADIUS * GRAVITY_RADIUS;
@@ -42,7 +42,7 @@ private:
     void adjustParticleSpeed(int start, int end);
     int getSquaredDistance(Particle*, Particle*);
     int getDistanceSum(Particle*, Particle*);
-    void onUpdate();
+    void onUpdate(unsigned int deltaTime);
     void onDraw();
     void onQuit();
 public:

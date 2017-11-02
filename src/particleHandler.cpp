@@ -6,6 +6,8 @@ ParticleHandler::ParticleHandler(SDL_Renderer* r, SDL_Window* w, int windowWidth
     WINDOW_H = windowHeight;
     renderer = r;
 
+    NPARTICLES = 2000;
+
     //create particle data structures
     pinkPoint = Utils::createTextureFromPath("res/pinkpoint.bmp", renderer);
     bluePoint = Utils::createTextureFromPath("res/bluepoint.bmp", renderer);
@@ -36,12 +38,17 @@ void ParticleHandler::printParticle(Particle *p) {
         << "\t" << p->w << ", " << p->h << "\n\n";
 }
 
-void ParticleHandler::onUpdate() {
+void ParticleHandler::onUpdate(unsigned int deltaTime) {
     int length = particles.size();
-    std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/2);
-    std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length);
+    std::thread first (&ParticleHandler::adjustParticleSpeed, this, 0, length/4);
+    std::thread second(&ParticleHandler::adjustParticleSpeed, this, length/4+1, length/2);
+    std::thread third(&ParticleHandler::adjustParticleSpeed, this, length/2+1, length/4*3);
+    std::thread fourth(&ParticleHandler::adjustParticleSpeed, this, length/4*3+1, length);
     first.join();
     second.join();
+    third.join();
+    fourth.join();
+    //adjustParticleSpeed(0, length);
     moveParticles();
 }
 

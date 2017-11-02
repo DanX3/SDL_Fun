@@ -15,6 +15,7 @@ private:
     float verticalSpeed;
     bool touchesFloor;
     int windowWidth, windowHeight;
+    void changeColor();
     void jump();
     void fall(unsigned int);
     void bounce(int);

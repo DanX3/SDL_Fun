@@ -12,6 +12,9 @@
 
 class GameLoop {
 private:
+    int frames_drawn;
+    int time_elapsed;
+
     SDL_Window* window;
     SDL_Renderer *renderer;
     size_t actorsSize;

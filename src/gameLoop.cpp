@@ -152,6 +152,14 @@ int GameLoop::loop() {
         }
         endTick = SDL_GetTicks();
         timeSpentDrawingFrame = endTick - startTick;
+
+        time_elapsed += timeSpentDrawingFrame;
+        frames_drawn += 1;
+        if (time_elapsed >= 1000) {
+            std::cout << frames_drawn / (time_elapsed / 1000) << " FPS" << '\n';
+            frames_drawn = 0;
+            time_elapsed = 0;
+        }
     }
     return 0;
 }
@@ -170,16 +178,21 @@ int main(int argc, char** argv) {
     SDL_Renderer* renderer = gameLoop.getRenderer();
     SDL_Window* window = gameLoop.getWindow();
 
-    gameLoop.addActor( new AcceleratedCube(
-        renderer, window, new SDL_Rect{300,0,100,100}, new SDL_Color{244,67,54,255}),
-        ActorProperties(COLLISION_ROUGH));
-    gameLoop.addActor(new AcceleratedCube(
-        renderer, window, new SDL_Rect{300, 500,100,100}),
-        ActorProperties(COLLISION_ROUGH));
+    //gameLoop.addActor( new AcceleratedCube(
+        //renderer, window, new SDL_Rect{300,0,100,100}, new SDL_Color{244,67,54,255}),
+        //ActorProperties(COLLISION_ROUGH));
+    //gameLoop.addActor(new AcceleratedCube(
+        //renderer, window, new SDL_Rect{300, 500,100,100}),
+        //ActorProperties(COLLISION_ROUGH));
 
 
-    //gameLoop.addActor(new AcceleratedCube(renderer, window, 50, 50, 50, 50),
-        //ActorProperties(true, true));
+    //for (int i=10; i<900; i+=15) {
+        //gameLoop.addActor(new AcceleratedCube(renderer, window,
+        //new SDL_Rect{i, 50, 10,20}, new SDL_Color{ i % 256, i % 256, i % 256,255}),
+            //ActorProperties(MOUSE_INPUT | KEYBOARD_INPUT));
+    //}
+    
+    gameLoop.addActor(new ParticleHandler(renderer, window, 800, 600), ActorProperties(MOUSE_INPUT));
 
     gameLoop.play();
 #endif
